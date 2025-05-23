@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>History Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #b79891 0%, #94716b 100%);
+    color: #fff;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Add a subtle parchment/paper pattern overlay */
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://www.transparenttextures.com/patterns/old-mathematics.png');
+    opacity: 0.13;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #app {
+    background: #2d2320;
+    border-radius: 24px;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.7);
+    max-width: 500px;
+    width: 100%;
+    padding: 2.5rem 2rem 2rem 2rem;
+    position: relative;
+    z-index: 1;
+    border: 3px solid #b79891;
+  }
+  h1 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 2.2rem;
+    color: #ffcc00;
+    text-shadow: 2px 2px 0 #94716b, 0 2px 8px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  h1::before {
+    content: '\1F3F9'; /* scroll emoji */
+    font-size: 2rem;
+    margin-right: 0.3em;
+    filter: drop-shadow(1px 1px 0 #b79891);
+  }
+  h1::after {
+    content: '\269C'; /* cross fleur-de-lis emoji */
+    font-size: 2rem;
+    margin-left: 0.3em;
+    filter: drop-shadow(1px 1px 0 #b79891);
+  }
+  #question {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    min-height: 70px;
+    font-weight: 600;
+    color: #ffcc00;
+    text-shadow: 1px 1px 0 #94716b;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  #options {
+    display: flex;
+    flex-direction: column;
+  }
+  .option-btn {
+    background: linear-gradient(90deg, #b79891 60%, #94716b 100%);
+    border: 2px solid #ffcc00;
+    border-radius: 12px;
+    color: #2d2320;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    position: relative;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  .option-btn:hover {
+    background: linear-gradient(90deg, #ffcc00 60%, #b79891 100%);
+    color: #000;
+    transform: scale(1.04);
+  }
+  .option-btn.correct {
+    background: #2ecc71;
+    color: #fff;
+    box-shadow: 0 0 10px #27ae60;
+    border-color: #2ecc71;
+    position: relative;
+  }
+  .option-btn.correct::after {
+    content: '\2714';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  .option-btn.wrong {
+    background: #e74c3c;
+    color: #fff;
+    box-shadow: 0 0 10px #c0392b;
+    border-color: #e74c3c;
+    position: relative;
+  }
+  .option-btn.wrong::after {
+    content: '\2716';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  #info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #ffcc00;
+    font-weight: 700;
+    text-shadow: 1px 1px 0 #94716b;
+  }
+  #timer {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #ffcc00;
+    text-shadow: 1px 1px 0 #94716b;
+  }
+  #score {
+    font-weight: 800;
+    color: #ffcc00;
+    text-shadow: 1px 1px 0 #94716b;
+  }
+  #next-btn {
+    margin-top: 1.5rem;
+    background: linear-gradient(90deg, #ffcc00 60%, #b79891 100%);
+    color: #2d2320;
+    border: 2px solid #ffcc00;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1rem;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    box-shadow: 0 8px 15px rgba(183, 152, 145, 0.18);
+    letter-spacing: 1px;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  #next-btn:hover:not(:disabled) {
+    background: linear-gradient(90deg, #b79891 60%, #ffcc00 100%);
+    color: #000;
+    transform: scale(1.03);
+  }
+  #next-btn:disabled {
+    background: #94716b;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: #94716b;
+  }
+  #result {
+    text-align: center;
+  }
+  #result h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+    color: #ffcc00;
+    text-shadow: 1px 1px 0 #94716b;
+    font-weight: 800;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  #result p {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  #restart-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 15px rgba(39, 174, 96, 0.4);
+    transition: background 0.3s, transform 0.15s;
+    letter-spacing: 1px;
+    font-family: 'Poppins', 'Georgia', serif;
+  }
+  #restart-btn:hover {
+    background: #2ecc71;
+    box-shadow: 0 12px 25px rgba(46, 204, 113, 0.6);
+    transform: scale(1.04);
+  }
+</style>
+</head>
+<body>
+  <div id="app" role="main" aria-label="History Quiz">
+    <h1>History Quiz</h1>
+    <div id="quiz-container">
+      <div id="question" aria-live="polite"></div>
+      <div id="options" role="list"></div>
+      <div id="info">
+        <div id="timer" aria-live="polite" aria-atomic="true"></div>
+        <div id="score">Score: 0</div>
+      </div>
+      <button id="next-btn" disabled aria-disabled="true">Next Question</button>
+    </div>
+    <div id="result" class="hidden" aria-live="polite" aria-atomic="true">
+      <h2>Quiz Completed!</h2>
+      <p id="final-score"></p>
+      <button id="restart-btn">Restart Quiz</button>
+    </div>
+  </div>
+
+<script>
+  (function() {
+  // Fisher-Yates shuffle function
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  let quizData = [
+    {
+      question: "Who was the first President of the United States?",
+      options: ["George Washington", "Thomas Jefferson", "Abraham Lincoln", "John Adams"],
+      answer: 0
+    },
+    {
+      question: "The Great Wall of China was primarily built to protect against which group?",
+      options: ["Mongols", "Romans", "Vikings", "Persians"],
+      answer: 0
+    },
+    {
+      question: "In which year did the Berlin Wall fall?",
+      options: ["1989", "1975", "1991", "1961"],
+      answer: 0
+    },
+    {
+      question: "Who discovered America in 1492?",
+      options: ["Christopher Columbus", "Leif Erikson", "Ferdinand Magellan", "Vasco da Gama"],
+      answer: 0
+    },
+    {
+      question: "Which empire was ruled by Julius Caesar?",
+      options: ["Roman Empire", "Ottoman Empire", "Mongol Empire", "Byzantine Empire"],
+      answer: 0
+    },
+    // Additional history questions
+    {
+      question: "Who was the British Prime Minister during most of World War II?",
+      options: ["Winston Churchill", "Neville Chamberlain", "Margaret Thatcher", "Tony Blair"],
+      answer: 0
+    },
+    {
+      question: "Which ancient civilization built Machu Picchu?",
+      options: ["Aztec", "Maya", "Inca", "Olmec"],
+      answer: 2
+    },
+    {
+      question: "What year did the Titanic sink?",
+      options: ["1912", "1905", "1920", "1898"],
+      answer: 0
+    },
+    {
+      question: "Who was known as the Maid of Orléans?",
+      options: ["Joan of Arc", "Marie Antoinette", "Catherine the Great", "Elizabeth I"],
+      answer: 0
+    },
+    {
+      question: "Which war was fought between the North and South regions in the United States?",
+      options: ["World War I", "American Civil War", "Revolutionary War", "Vietnam War"],
+      answer: 1
+    },
+    {
+      question: "Who was the first man to step on the Moon?",
+      options: ["Buzz Aldrin", "Yuri Gagarin", "Neil Armstrong", "Michael Collins"],
+      answer: 2
+    },
+    {
+      question: "Which city was the capital of the Byzantine Empire?",
+      options: ["Athens", "Rome", "Constantinople", "Alexandria"],
+      answer: 2
+    },
+    {
+      question: "Who wrote the Declaration of Independence?",
+      options: ["George Washington", "Benjamin Franklin", "Thomas Jefferson", "John Hancock"],
+      answer: 2
+    },
+    {
+      question: "What was the name of the ship on which the Pilgrims traveled to America in 1620?",
+      options: ["Santa Maria", "Mayflower", "Endeavour", "Beagle"],
+      answer: 1
+    },
+    {
+      question: "Who was the longest-reigning British monarch before Queen Elizabeth II?",
+      options: ["Queen Victoria", "King George III", "Queen Mary", "King Henry VIII"],
+      answer: 0
+    }
+  ];
+
+    const QUESTION_TIME = 15; // seconds
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const timerEl = document.getElementById('timer');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+    const quizContainerEl = document.getElementById('quiz-container');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = QUESTION_TIME;
+    let answered = false;
+
+    function startTimer() {
+      timeLeft = QUESTION_TIME;
+      timerEl.textContent = `Time: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `Time: ${timeLeft}s`;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          if (!answered) {
+            answered = true;
+            disableOptions();
+            revealAnswer();
+            nextBtn.disabled = false;
+            nextBtn.setAttribute('aria-disabled', 'false');
+          }
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      answered = false;
+      nextBtn.disabled = true;
+      nextBtn.setAttribute('aria-disabled', 'true');
+      questionEl.textContent = quizData[currentQuestionIndex].question;
+      optionsEl.innerHTML = '';
+      quizData[currentQuestionIndex].options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.textContent = option;
+        button.setAttribute('role', 'listitem');
+        button.addEventListener('click', () => selectAnswer(index, button));
+        optionsEl.appendChild(button);
+      });
+      startTimer();
+      scoreEl.textContent = `Score: ${score}`;
+    }
+
+    function selectAnswer(selectedIndex, button) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timer);
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      if (selectedIndex === correctIndex) {
+        score++;
+        button.classList.add('correct');
+      } else {
+        button.classList.add('wrong');
+        optionsEl.children[correctIndex].classList.add('correct');
+      }
+      disableOptions();
+      scoreEl.textContent = `Score: ${score}`;
+      nextBtn.disabled = false;
+      nextBtn.setAttribute('aria-disabled', 'false');
+    }
+
+    function disableOptions() {
+      Array.from(optionsEl.children).forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+      });
+    }
+
+    function revealAnswer() {
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      optionsEl.children[correctIndex].classList.add('correct');
+    }
+
+    function showResult() {
+      quizContainerEl.classList.add('hidden');
+      resultEl.classList.remove('hidden');
+      finalScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+    }
+
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      // Shuffle questions at the start of each quiz
+      quizData = shuffle(quizData);
+      quizContainerEl.classList.remove('hidden');
+      resultEl.classList.add('hidden');
+      renderQuestion();
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      resetQuiz();
+    });
+
+    // Initialize app
+    // Shuffle questions on first load
+    quizData = shuffle(quizData);
+    renderQuestion();
+  })();
+</script>
+</body>
+</html>

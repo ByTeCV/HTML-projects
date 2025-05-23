@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quiz Navigator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    color: white;
+  }
+  h1 {
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    font-size: 2rem;
+  }
+  .quiz-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.5rem;
+    max-width: 900px;
+    justify-items: center;
+    align-items: stretch;
+  }
+  .quiz-card {
+    background: rgba(255 255 255 / 0.1);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    width: 250px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    transition: background 0.25s ease, transform 0.25s ease;
+    user-select: none;
+  }
+  .quiz-card:hover,
+  .quiz-card:focus {
+    background: rgba(255 255 255 / 0.3);
+    transform: translateY(-5px);
+    outline: none;
+  }
+  .quiz-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  .quiz-desc {
+    font-size: 0.95rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+  }
+  .start-btn {
+    background: #764ba2;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(118, 75, 162, 0.6);
+    transition: background 0.3s ease;
+  }
+  .start-btn:hover,
+  .start-btn:focus {
+    background: #a278d9;
+    outline: none;
+  }
+  @media (max-width: 600px) {
+    .quiz-list {
+      display: flex !important;
+      flex-direction: column;
+      align-items: center;
+    }
+    .quiz-card {
+      width: 90%;
+    }
+  }
+</style>
+</head>
+<body>
+  <h1>Choose Your Quiz</h1>
+  <div class="quiz-list" role="list" style="display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); gap: 1.5rem; max-width: 900px; justify-items: center; align-items: stretch;">
+    <div class="quiz-card" role="listitem" tabindex="0" aria-label="General Knowledge quiz">
+      <div class="quiz-title">General Knowledge</div>
+      <div class="quiz-desc">Test your general trivia knowledge across various topics.</div>
+      <button class="start-btn" aria-label="Start General Knowledge Quiz" onclick="navigateQuiz('quiz-spa.html')">Start Quiz</button>
+    </div>
+    <div class="quiz-card" role="listitem" tabindex="0" aria-label="Science Quiz">
+      <div class="quiz-title">Science Quiz</div>
+      <div class="quiz-desc">Challenge your knowledge of physics, chemistry, biology, and more.</div>
+      <button class="start-btn" aria-label="Start Science Quiz" onclick="navigateQuiz('science-quiz.html')">Start Quiz</button>
+    </div>
+    <div class="quiz-card" role="listitem" tabindex="0" aria-label="History Quiz">
+      <div class="quiz-title">History Quiz</div>
+      <div class="quiz-desc">Delve into historical events, figures, and timelines.</div>
+      <button class="start-btn" aria-label="Start History Quiz" onclick="navigateQuiz('history-quiz.html')">Start Quiz</button>
+    </div>
+    <div class="quiz-card" role="listitem" tabindex="0" aria-label="Sports Quiz">
+      <div class="quiz-title">Sports Quiz</div>
+      <div class="quiz-desc">Test your knowledge of sports, teams, and athletes worldwide.</div>
+      <button class="start-btn" aria-label="Start Sports Quiz" onclick="navigateQuiz('sports-quiz.html')">Start Quiz</button>
+    </div>
+  </div>
+
+<script>
+  function navigateQuiz(url) {
+    window.location.href = url;
+  }
+  document.querySelectorAll('.quiz-card').forEach(card => {
+    card.addEventListener('keydown', e => {
+      if(e.key === 'Enter' || e.key === ' ') {
+        const btn = card.querySelector('.start-btn');
+        btn.click();
+      }
+    });
+  });
+</script>
+</body>
+</html>

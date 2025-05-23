@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sports Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+    color: #fff;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Add a subtle sports pattern overlay */
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://www.transparenttextures.com/patterns/football-no-lines.png');
+    opacity: 0.12;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #app {
+    background: #2d2a1f;
+    border-radius: 24px;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.7);
+    max-width: 500px;
+    width: 100%;
+    padding: 2.5rem 2rem 2rem 2rem;
+    position: relative;
+    z-index: 1;
+    border: 3px solid #ffd200;
+  }
+  h1 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 2.2rem;
+    color: #ffd200;
+    text-shadow: 2px 2px 0 #f7971e, 0 2px 8px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  h1::before {
+    content: '\26BD'; /* soccer ball emoji */
+    font-size: 2rem;
+    margin-right: 0.3em;
+    filter: drop-shadow(1px 1px 0 #f7971e);
+  }
+  h1::after {
+    content: '\1F3C0'; /* basketball emoji */
+    font-size: 2rem;
+    margin-left: 0.3em;
+    filter: drop-shadow(1px 1px 0 #f7971e);
+  }
+  #question {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    min-height: 70px;
+    font-weight: 600;
+    color: #ffd200;
+    text-shadow: 1px 1px 0 #f7971e;
+  }
+  #options {
+    display: flex;
+    flex-direction: column;
+  }
+  .option-btn {
+    background: linear-gradient(90deg, #f7971e 60%, #ffd200 100%);
+    border: 2px solid #ffd200;
+    border-radius: 12px;
+    color: #2d2a1f;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .option-btn:hover {
+    background: linear-gradient(90deg, #ffd200 60%, #f7971e 100%);
+    color: #000;
+    transform: scale(1.04);
+  }
+  .option-btn.correct {
+    background: #2ecc71;
+    color: #fff;
+    box-shadow: 0 0 10px #27ae60;
+    border-color: #2ecc71;
+    position: relative;
+  }
+  .option-btn.correct::after {
+    content: '\2714';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  .option-btn.wrong {
+    background: #e74c3c;
+    color: #fff;
+    box-shadow: 0 0 10px #c0392b;
+    border-color: #e74c3c;
+    position: relative;
+  }
+  .option-btn.wrong::after {
+    content: '\2716';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  #info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #ffd200;
+    font-weight: 700;
+    text-shadow: 1px 1px 0 #f7971e;
+  }
+  #timer {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #ffd200;
+    text-shadow: 1px 1px 0 #f7971e;
+  }
+  #score {
+    font-weight: 800;
+    color: #ffd200;
+    text-shadow: 1px 1px 0 #f7971e;
+  }
+  #next-btn {
+    margin-top: 1.5rem;
+    background: linear-gradient(90deg, #ffd200 60%, #f7971e 100%);
+    color: #2d2a1f;
+    border: 2px solid #ffd200;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1rem;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    box-shadow: 0 8px 15px rgba(247, 151, 30, 0.18);
+    letter-spacing: 1px;
+  }
+  #next-btn:hover:not(:disabled) {
+    background: linear-gradient(90deg, #f7971e 60%, #ffd200 100%);
+    color: #000;
+    transform: scale(1.03);
+  }
+  #next-btn:disabled {
+    background: #bfae6e;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: #bfae6e;
+  }
+  #result {
+    text-align: center;
+  }
+  #result h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+    color: #ffd200;
+    text-shadow: 1px 1px 0 #f7971e;
+    font-weight: 800;
+  }
+  #result p {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+  }
+  #restart-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 15px rgba(39, 174, 96, 0.4);
+    transition: background 0.3s, transform 0.15s;
+    letter-spacing: 1px;
+  }
+  #restart-btn:hover {
+    background: #2ecc71;
+    box-shadow: 0 12px 25px rgba(46, 204, 113, 0.6);
+    transform: scale(1.04);
+  }
+</style>
+</head>
+<body>
+  <div id="app" role="main" aria-label="Sports Quiz">
+    <h1>Sports Quiz</h1>
+    <div id="quiz-container">
+      <div id="question" aria-live="polite"></div>
+      <div id="options" role="list"></div>
+      <div id="info">
+        <div id="timer" aria-live="polite" aria-atomic="true"></div>
+        <div id="score">Score: 0</div>
+      </div>
+      <button id="next-btn" disabled aria-disabled="true">Next Question</button>
+    </div>
+    <div id="result" class="hidden" aria-live="polite" aria-atomic="true">
+      <h2>Quiz Completed!</h2>
+      <p id="final-score"></p>
+      <button id="restart-btn">Restart Quiz</button>
+    </div>
+  </div>
+
+<script>
+  (function() {
+    // Fisher-Yates shuffle function
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    let quizData = [
+      {
+        question: "Which country won the FIFA World Cup in 2018?",
+        options: ["Brazil", "Germany", "France", "Argentina"],
+        answer: 2
+      },
+      {
+        question: "How many players are there in a baseball team?",
+        options: ["7", "9", "11", "5"],
+        answer: 1
+      },
+      {
+        question: "Who holds the record for the most Olympic gold medals?",
+        options: ["Usain Bolt", "Michael Phelps", "Simone Biles", "Carl Lewis"],
+        answer: 1
+      },
+      {
+        question: "Which sport uses the terms 'love', 'deuce', and 'ace'?",
+        options: ["Badminton", "Tennis", "Squash", "Table Tennis"],
+        answer: 1
+      },
+      {
+        question: "In which country were the first Olympic Games held?",
+        options: ["Italy", "Greece", "France", "Egypt"],
+        answer: 1
+      },
+      {
+        question: "What is the maximum score in a single frame of snooker?",
+        options: ["147", "155", "100", "120"],
+        answer: 0
+      },
+      {
+        question: "Which NBA team has won the most championships?",
+        options: ["Chicago Bulls", "Los Angeles Lakers", "Boston Celtics", "Golden State Warriors"],
+        answer: 2
+      },
+      {
+        question: "Who is known as the 'King of Clay' in tennis?",
+        options: ["Roger Federer", "Novak Djokovic", "Rafael Nadal", "Andy Murray"],
+        answer: 2
+      },
+      {
+        question: "Which country is famous for the sport of sumo wrestling?",
+        options: ["China", "Japan", "South Korea", "Thailand"],
+        answer: 1
+      },
+      {
+        question: "How long is an Olympic swimming pool?",
+        options: ["25 meters", "50 meters", "100 meters", "75 meters"],
+        answer: 1
+      },
+      {
+        question: "Which sport is known as the 'king of sports'?",
+        options: ["Basketball", "Soccer (Football)", "Cricket", "Rugby"],
+        answer: 1
+      },
+      {
+        question: "Who won the men's singles Wimbledon title in 2021?",
+        options: ["Novak Djokovic", "Roger Federer", "Rafael Nadal", "Andy Murray"],
+        answer: 0
+      },
+      {
+        question: "Which country has hosted the most Summer Olympic Games?",
+        options: ["United States", "United Kingdom", "France", "Australia"],
+        answer: 0
+      },
+      {
+        question: "What is the national sport of Canada?",
+        options: ["Ice Hockey", "Lacrosse", "Baseball", "Basketball"],
+        answer: 1
+      },
+      {
+        question: "How many rings are there on the Olympic flag?",
+        options: ["4", "5", "6", "7"],
+        answer: 1
+      }
+    ];
+
+    const QUESTION_TIME = 15; // seconds
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const timerEl = document.getElementById('timer');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+    const quizContainerEl = document.getElementById('quiz-container');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = QUESTION_TIME;
+    let answered = false;
+
+    function startTimer() {
+      timeLeft = QUESTION_TIME;
+      timerEl.textContent = `Time: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `Time: ${timeLeft}s`;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          if (!answered) {
+            answered = true;
+            disableOptions();
+            revealAnswer();
+            nextBtn.disabled = false;
+            nextBtn.setAttribute('aria-disabled', 'false');
+          }
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      answered = false;
+      nextBtn.disabled = true;
+      nextBtn.setAttribute('aria-disabled', 'true');
+      questionEl.textContent = quizData[currentQuestionIndex].question;
+      optionsEl.innerHTML = '';
+      quizData[currentQuestionIndex].options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.textContent = option;
+        button.setAttribute('role', 'listitem');
+        button.addEventListener('click', () => selectAnswer(index, button));
+        optionsEl.appendChild(button);
+      });
+      startTimer();
+      scoreEl.textContent = `Score: ${score}`;
+    }
+
+    function selectAnswer(selectedIndex, button) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timer);
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      if (selectedIndex === correctIndex) {
+        score++;
+        button.classList.add('correct');
+      } else {
+        button.classList.add('wrong');
+        optionsEl.children[correctIndex].classList.add('correct');
+      }
+      disableOptions();
+      scoreEl.textContent = `Score: ${score}`;
+      nextBtn.disabled = false;
+      nextBtn.setAttribute('aria-disabled', 'false');
+    }
+
+    function disableOptions() {
+      Array.from(optionsEl.children).forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+      });
+    }
+
+    function revealAnswer() {
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      optionsEl.children[correctIndex].classList.add('correct');
+    }
+
+    function showResult() {
+      quizContainerEl.classList.add('hidden');
+      resultEl.classList.remove('hidden');
+      finalScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+    }
+
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      // Shuffle questions at the start of each quiz
+      quizData = shuffle(quizData);
+      quizContainerEl.classList.remove('hidden');
+      resultEl.classList.add('hidden');
+      renderQuestion();
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      resetQuiz();
+    });
+
+    // Initialize app
+    // Shuffle questions on first load
+    quizData = shuffle(quizData);
+    renderQuestion();
+  })();
+</script>
+</body>
+</html>

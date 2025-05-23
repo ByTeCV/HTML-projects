@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Science Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+    color: #fff;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    /* Add a subtle science pattern overlay */
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://www.transparenttextures.com/patterns/cubes.png');
+    opacity: 0.10;
+    z-index: 0;
+    pointer-events: none;
+  }
+  #app {
+    background: #12344a;
+    border-radius: 24px;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.7);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    padding: 2.5rem 2rem 2rem 2rem;
+    position: relative;
+    z-index: 1;
+    border: 3px solid #43cea2;
+  }
+  h1 {
+    text-align: center;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 2.2rem;
+    color: #43cea2;
+    text-shadow: 2px 2px 0 #185a9d, 0 2px 8px #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  h1::before {
+    content: '\269B'; /* atom symbol emoji */
+    font-size: 2rem;
+    margin-right: 0.3em;
+    filter: drop-shadow(1px 1px 0 #43cea2);
+  }
+  h1::after {
+    content: '\1F52C'; /* microscope emoji */
+    font-size: 2rem;
+    margin-left: 0.3em;
+    filter: drop-shadow(1px 1px 0 #43cea2);
+  }
+  #question {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    min-height: 70px;
+    font-weight: 600;
+    color: #43cea2;
+    text-shadow: 1px 1px 0 #185a9d;
+  }
+  #options {
+    display: flex;
+    flex-direction: column;
+  }
+  .option-btn {
+    background: linear-gradient(90deg, #43cea2 60%, #185a9d 100%);
+    border: 2px solid #43cea2;
+    border-radius: 12px;
+    color: #12344a;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin-bottom: 0.75rem;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    text-align: left;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    position: relative;
+  }
+  .option-btn:hover {
+    background: linear-gradient(90deg, #185a9d 60%, #43cea2 100%);
+    color: #fff;
+    transform: scale(1.04);
+  }
+  .option-btn.correct {
+    background: #2ecc71;
+    color: #fff;
+    box-shadow: 0 0 10px #27ae60;
+    border-color: #2ecc71;
+    position: relative;
+  }
+  .option-btn.correct::after {
+    content: '\2714';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  .option-btn.wrong {
+    background: #e74c3c;
+    color: #fff;
+    box-shadow: 0 0 10px #c0392b;
+    border-color: #e74c3c;
+    position: relative;
+  }
+  .option-btn.wrong::after {
+    content: '\2716';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2em;
+    color: #fff;
+  }
+  #info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #43cea2;
+    font-weight: 700;
+    text-shadow: 1px 1px 0 #185a9d;
+  }
+  #timer {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #ffcc00;
+    text-shadow: 1px 1px 0 #185a9d;
+  }
+  #score {
+    font-weight: 800;
+    color: #43cea2;
+    text-shadow: 1px 1px 0 #185a9d;
+  }
+  #next-btn {
+    margin-top: 1.5rem;
+    background: linear-gradient(90deg, #185a9d 60%, #43cea2 100%);
+    color: #fff;
+    border: 2px solid #43cea2;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1.1rem;
+    transition: background 0.3s, color 0.3s, transform 0.15s;
+    box-shadow: 0 8px 15px rgba(67, 206, 162, 0.18);
+    letter-spacing: 1px;
+  }
+  #next-btn:hover:not(:disabled) {
+    background: linear-gradient(90deg, #43cea2 60%, #185a9d 100%);
+    color: #fff;
+    transform: scale(1.03);
+  }
+  #next-btn:disabled {
+    background: #457a9d;
+    color: #fff;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: #457a9d;
+  }
+  #result h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+    color: #43cea2;
+    text-shadow: 1px 1px 0 #185a9d;
+    font-weight: 800;
+  }
+  #result p {
+    font-size: 1.15rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+  }
+  #restart-btn {
+    background: #27ae60;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 15px rgba(39, 174, 96, 0.4);
+    transition: background 0.3s, transform 0.15s;
+    letter-spacing: 1px;
+  }
+  #restart-btn:hover {
+    background: #2ecc71;
+    box-shadow: 0 12px 25px rgba(46, 204, 113, 0.6);
+    transform: scale(1.04);
+  }
+</style>
+</head>
+<body>
+  <div id="app" role="main" aria-label="Science Quiz">
+    <h1>Science Quiz</h1>
+    <div id="quiz-container">
+      <div id="question" aria-live="polite"></div>
+      <div id="options" role="list"></div>
+      <div id="info">
+        <div id="timer" aria-live="polite" aria-atomic="true"></div>
+        <div id="score">Score: 0</div>
+      </div>
+      <button id="next-btn" disabled aria-disabled="true">Next Question</button>
+    </div>
+    <div id="result" class="hidden" aria-live="polite" aria-atomic="true">
+      <h2>Quiz Completed!</h2>
+      <p id="final-score"></p>
+      <button id="restart-btn">Restart Quiz</button>
+    </div>
+  </div>
+
+<script>
+  (function() {
+  // Fisher-Yates shuffle function
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  let quizData = [
+    {
+      question: "What is the chemical symbol for water?",
+      options: ["WO", "H2O", "HO2", "HO"],
+      answer: 1
+    },
+    {
+      question: "What force keeps planets orbiting around the Sun?",
+      options: ["Magnetism", "Gravity", "Friction", "Electricity"],
+      answer: 1
+    },
+    {
+      question: "Which gas do plants absorb during photosynthesis?",
+      options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Hydrogen"],
+      answer: 1
+    },
+    {
+      question: "What particle has a negative charge?",
+      options: ["Proton", "Electron", "Neutron", "Photon"],
+      answer: 1
+    },
+    {
+      question: "What planet is the hottest in our solar system?",
+      options: ["Mercury", "Venus", "Mars", "Jupiter"],
+      answer: 1
+    },
+    // Additional science questions
+    {
+      question: "What is the powerhouse of the cell?",
+      options: ["Nucleus", "Mitochondria", "Ribosome", "Chloroplast"],
+      answer: 1
+    },
+    {
+      question: "Which organ in the human body is responsible for pumping blood?",
+      options: ["Liver", "Lungs", "Heart", "Kidneys"],
+      answer: 2
+    },
+    {
+      question: "What is the main gas found in the air we breathe?",
+      options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+      answer: 1
+    },
+    {
+      question: "What is the process by which plants make their food?",
+      options: ["Respiration", "Photosynthesis", "Transpiration", "Fermentation"],
+      answer: 1
+    },
+    {
+      question: "Which planet is known as the Red Planet?",
+      options: ["Venus", "Mars", "Jupiter", "Saturn"],
+      answer: 1
+    },
+    {
+      question: "What is the boiling point of water at sea level?",
+      options: ["90°C", "100°C", "80°C", "120°C"],
+      answer: 1
+    },
+    {
+      question: "Who developed the theory of relativity?",
+      options: ["Isaac Newton", "Albert Einstein", "Galileo Galilei", "Marie Curie"],
+      answer: 1
+    },
+    {
+      question: "What is the largest organ in the human body?",
+      options: ["Liver", "Skin", "Heart", "Lungs"],
+      answer: 1
+    },
+    {
+      question: "Which vitamin is produced when a person is exposed to sunlight?",
+      options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"],
+      answer: 3
+    },
+    {
+      question: "What is the center of an atom called?",
+      options: ["Electron", "Proton", "Nucleus", "Neutron"],
+      answer: 2
+    },
+    {
+      question: "Which scientist is famous for his laws of motion?",
+      options: ["Albert Einstein", "Isaac Newton", "Nikola Tesla", "Stephen Hawking"],
+      answer: 1
+    }
+  ];
+
+    const QUESTION_TIME = 15; // seconds
+
+    const questionEl = document.getElementById('question');
+    const optionsEl = document.getElementById('options');
+    const timerEl = document.getElementById('timer');
+    const scoreEl = document.getElementById('score');
+    const nextBtn = document.getElementById('next-btn');
+    const resultEl = document.getElementById('result');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restart-btn');
+    const quizContainerEl = document.getElementById('quiz-container');
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let timer;
+    let timeLeft = QUESTION_TIME;
+    let answered = false;
+
+    function startTimer() {
+      timeLeft = QUESTION_TIME;
+      timerEl.textContent = `Time: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `Time: ${timeLeft}s`;
+        if (timeLeft === 0) {
+          clearInterval(timer);
+          if (!answered) {
+            answered = true;
+            disableOptions();
+            revealAnswer();
+            nextBtn.disabled = false;
+            nextBtn.setAttribute('aria-disabled', 'false');
+          }
+        }
+      }, 1000);
+    }
+
+    function renderQuestion() {
+      answered = false;
+      nextBtn.disabled = true;
+      nextBtn.setAttribute('aria-disabled', 'true');
+      questionEl.textContent = quizData[currentQuestionIndex].question;
+      optionsEl.innerHTML = '';
+      quizData[currentQuestionIndex].options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.className = 'option-btn';
+        button.textContent = option;
+        button.setAttribute('role', 'listitem');
+        button.addEventListener('click', () => selectAnswer(index, button));
+        optionsEl.appendChild(button);
+      });
+      startTimer();
+      scoreEl.textContent = `Score: ${score}`;
+    }
+
+    function selectAnswer(selectedIndex, button) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timer);
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      if (selectedIndex === correctIndex) {
+        score++;
+        button.classList.add('correct');
+      } else {
+        button.classList.add('wrong');
+        optionsEl.children[correctIndex].classList.add('correct');
+      }
+      disableOptions();
+      scoreEl.textContent = `Score: ${score}`;
+      nextBtn.disabled = false;
+      nextBtn.setAttribute('aria-disabled', 'false');
+    }
+
+    function disableOptions() {
+      Array.from(optionsEl.children).forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+      });
+    }
+
+    function revealAnswer() {
+      const correctIndex = quizData[currentQuestionIndex].answer;
+      optionsEl.children[correctIndex].classList.add('correct');
+    }
+
+    function showResult() {
+      quizContainerEl.classList.add('hidden');
+      resultEl.classList.remove('hidden');
+      finalScoreEl.textContent = `You scored ${score} out of ${quizData.length}!`;
+    }
+
+    function resetQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      // Shuffle questions at the start of each quiz
+      quizData = shuffle(quizData);
+      quizContainerEl.classList.remove('hidden');
+      resultEl.classList.add('hidden');
+      renderQuestion();
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < quizData.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      resetQuiz();
+    });
+
+    // Initialize app
+    // Shuffle questions on first load
+    quizData = shuffle(quizData);
+    renderQuestion();
+  })();
+</script>
+</body>
+</html>
