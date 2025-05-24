@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Space Shooter Game</title>
+<style>
+  body {
+    margin: 0;
+    background: #000010;
+    /* We'll use canvas for animated stars */
+    color: #0ff;
+    font-family: 'Orbitron', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  h1 {
+    margin: 16px 0 0 0;
+    letter-spacing: 0.25em;
+    font-weight: 900;
+    color: #0ff;
+    text-shadow: 0 0 20px #0ff, 0 0 40px #0ff, 0 2px 8px #000;
+    filter: drop-shadow(0 0 8px #0ff);
+    font-size: 2.5em;
+    margin-bottom: 0.2em;
+  }
+  #gameCanvas {
+    background: transparent;
+    border: 4px solid #0ff;
+    border-radius: 18px;
+    box-shadow: 0 0 40px 8px #0ff, 0 0 80px 0 #0ff44c44;
+    animation: borderGlow 2.5s linear infinite alternate;
+    outline: 2px solid #33ffff44;
+    outline-offset: 4px;
+    display: block;
+    margin: 16px auto 0 auto;
+  }
+  @keyframes borderGlow {
+    0% { box-shadow: 0 0 40px 8px #0ff, 0 0 80px 0 #0ff44c44; }
+    100% { box-shadow: 0 0 60px 16px #33ffff, 0 0 120px 0 #0ff44c88; }
+  }
+  #score {
+    font-size: 2em;
+    color: #fff;
+    text-shadow: 0 0 12px #0ff, 0 0 24px #0ff, 0 2px 8px #000;
+    background: rgba(0, 20, 40, 0.7);
+    border-radius: 10px;
+    padding: 6px 24px;
+    margin-top: 18px;
+    box-shadow: 0 0 10px #0ff44c44;
+    display: inline-block;
+  }
+  #gameOver {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #fff;
+    font-size: 3.5em;
+    font-weight: 900;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 0 40px #ff0044, 0 0 80px #ff0044, 0 2px 8px #000;
+    background: rgba(0,0,0,0.7);
+    border-radius: 16px;
+    padding: 24px 48px;
+    border: 2px solid #ff0044;
+    box-shadow: 0 0 40px #ff0044;
+    display: none;
+  }
+  #restartBtn {
+    margin-top: 20px;
+    padding: 10px 30px;
+    font-size: 1.3em;
+    font-weight: 700;
+    color: #001122;
+    background: linear-gradient(90deg, #0ff, #33ffff 60%, #0ff);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 20px #0ff, 0 0 40px #0ff44c44;
+    transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: 0.1em;
+    outline: none;
+    display: none;
+  }
+  #restartBtn:hover {
+    background: linear-gradient(90deg, #33ffff, #0ff 60%, #33ffff);
+    transform: scale(1.07);
+    box-shadow: 0 0 40px #0ff, 0 0 80px #0ff44c88;
+  }
+  /* Importing Orbitron font from Google Fonts */
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+</style>
+</head>
+<body>
+<h1>SPACE SHOOTER</h1>
+<canvas id="gameCanvas" width="480" height="640" tabindex="0"></canvas>
+<div id="score">Score: 0</div>
+<div id="gameOver">GAME OVER</div>
+<button id="restartBtn" style="display:none;">Restart</button>
+
+<script>
+(() => {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  const scoreDisplay = document.getElementById('score');
+  const gameOverDisplay = document.getElementById('gameOver');
+  const restartBtn = document.getElementById('restartBtn');
+
+  const WIDTH = canvas.width;
+  const HEIGHT = canvas.height;
+
+  // Player spaceship
+  const player = {
+    width: 48,
+    height: 32,
+    x: WIDTH / 2 - 24,
+    y: HEIGHT - 60,
+    speed: 6,
+    movingLeft: false,
+    movingRight: false,
+  };
+
+  // Bullets fired by player
+  let bullets = [];
+
+  // Enemy ships
+  let enemies = [];
+  const enemyWidth = 40;
+  const enemyHeight = 28;
+  let enemySpeed = 2;
+  let enemySpawnInterval = 1500; // milliseconds
+  let lastEnemySpawn = 0;
+
+  let score = 0;
+  let gameRunning = false;
+
+  // Controls
+  function keyDownHandler(e) {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+      player.movingLeft = true;
+    } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+      player.movingRight = true;
+    } else if (e.code === 'Space') {
+      shootBullet();
+      e.preventDefault();
+    }
+  }
+
+  function keyUpHandler(e) {
+    if (e.code === 'ArrowLeft' || e.code === 'KeyA') {
+      player.movingLeft = false;
+    } else if (e.code === 'ArrowRight' || e.code === 'KeyD') {
+      player.movingRight = false;
+    }
+  }
+
+  function shootBullet() {
+    if (!gameRunning) return;
+    bullets.push({
+      x: player.x + player.width / 2 - 4,
+      y: player.y,
+      width: 8,
+      height: 16,
+      speed: 10,
+    });
+    shootSound.play();
+  }
+
+  // Sounds
+  const shootSound = new Audio();
+  const explosionSound = new Audio();
+  shootSound.src = 'https://actions.google.com/sounds/v1/weapons/laser_blast.ogg';
+  explosionSound.src = 'https://actions.google.com/sounds/v1/explosions/explosion.ogg';
+
+  // Game reset
+  function resetGame() {
+    score = 0;
+    scoreDisplay.textContent = 'Score: 0';
+    bullets = [];
+    enemies = [];
+    enemySpeed = 2;
+    lastEnemySpawn = 0;
+    player.x = WIDTH / 2 - player.width / 2;
+    gameRunning = true;
+    gameOverDisplay.style.display = 'none';
+    restartBtn.style.display = 'none';
+    canvas.focus();
+    requestAnimationFrame(gameLoop);
+  }
+
+  // Enemy creation
+  function spawnEnemy() {
+    const x = Math.random() * (WIDTH - enemyWidth);
+    enemies.push({
+      x,
+      y: -enemyHeight,
+      width: enemyWidth,
+      height: enemyHeight,
+      speed: enemySpeed,
+    });
+  }
+
+  // Collision detection
+  function rectsIntersect(r1, r2) {
+    return !(
+      r2.x > r1.x + r1.width ||
+      r2.x + r2.width < r1.x ||
+      r2.y > r1.y + r1.height ||
+      r2.y + r2.height < r1.y
+    );
+  }
+
+  // Starfield background
+  const starCanvas = document.createElement('canvas');
+  starCanvas.width = WIDTH;
+  starCanvas.height = HEIGHT;
+  starCanvas.style.position = 'absolute';
+  starCanvas.style.left = canvas.offsetLeft + 'px';
+  starCanvas.style.top = canvas.offsetTop + 'px';
+  starCanvas.style.zIndex = 0;
+  document.body.insertBefore(starCanvas, canvas);
+  const starCtx = starCanvas.getContext('2d');
+
+  const STAR_COUNT = 80;
+  const stars = Array.from({length: STAR_COUNT}, () => ({
+    x: Math.random() * WIDTH,
+    y: Math.random() * HEIGHT,
+    r: Math.random() * 1.2 + 0.5,
+    speed: Math.random() * 0.7 + 0.2
+  }));
+
+  function drawStars() {
+    starCtx.clearRect(0, 0, WIDTH, HEIGHT);
+    for (const s of stars) {
+      starCtx.save();
+      starCtx.globalAlpha = 0.7 + Math.sin(Date.now() * 0.002 + s.x) * 0.3;
+      starCtx.beginPath();
+      starCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      starCtx.fillStyle = '#0ff';
+      starCtx.shadowColor = '#0ff';
+      starCtx.shadowBlur = 8;
+      starCtx.fill();
+      starCtx.restore();
+      s.y += s.speed;
+      if (s.y > HEIGHT) {
+        s.y = -s.r;
+        s.x = Math.random() * WIDTH;
+      }
+    }
+    requestAnimationFrame(drawStars);
+  }
+  drawStars();
+
+  // Game loop
+  function gameLoop(timestamp) {
+    if (!gameRunning) return;
+
+    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    // Move player
+    if (player.movingLeft) {
+      player.x -= player.speed;
+    }
+    if (player.movingRight) {
+      player.x += player.speed;
+    }
+
+    // Keep player in bounds
+    player.x = Math.max(0, Math.min(WIDTH - player.width, player.x));
+
+    // Draw player ship
+    drawPlayer();
+
+    // Move and draw bullets
+    bullets.forEach((b, i) => {
+      b.y -= b.speed;
+      if (b.y + b.height < 0) {
+        bullets.splice(i, 1);
+      } else {
+        drawBullet(b);
+      }
+    });
+
+    // Spawn enemies periodically
+    if (!lastEnemySpawn || timestamp - lastEnemySpawn > enemySpawnInterval) {
+      spawnEnemy();
+      lastEnemySpawn = timestamp;
+    }
+
+    // Move and draw enemies
+    enemies.forEach((enemy, index) => {
+      enemy.y += enemy.speed;
+      if (enemy.y > HEIGHT) {
+        // Enemy reached bottom — game over
+        gameOver();
+      }
+      if (rectsIntersect(enemy, player)) {
+        // Enemy collided with player — game over
+        gameOver();
+      }
+
+      // Check bullet collision with enemy
+      bullets.forEach((bullet, bIndex) => {
+        if (rectsIntersect(enemy, bullet)) {
+          explosionSound.play();
+          enemies.splice(index, 1);
+          bullets.splice(bIndex, 1);
+          score += 10;
+          scoreDisplay.textContent = 'Score: ' + score;
+
+          // Increase difficulty slightly every 50 points
+          if (score % 50 === 0) {
+            enemySpeed += 0.3;
+            if (enemySpawnInterval > 400) {
+              enemySpawnInterval -= 100;
+            }
+          }
+        }
+      });
+
+      drawEnemy(enemy);
+    });
+
+    requestAnimationFrame(gameLoop);
+  }
+
+  function gameOver() {
+    gameRunning = false;
+    gameOverDisplay.style.display = 'block';
+    restartBtn.style.display = 'inline-block';
+  }
+
+  // Drawing functions
+  function drawPlayer() {
+    const x = player.x;
+    const y = player.y;
+    const w = player.width;
+    const h = player.height;
+
+    // Main body (fuselage)
+    ctx.save();
+    ctx.fillStyle = '#0ff';
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, y); // nose
+    ctx.lineTo(x + w * 0.15, y + h * 0.85); // left bottom
+    ctx.lineTo(x + w * 0.35, y + h * 0.7); // left engine
+    ctx.lineTo(x + w * 0.35, y + h * 0.95); // left engine tip
+    ctx.lineTo(x + w * 0.65, y + h * 0.95); // right engine tip
+    ctx.lineTo(x + w * 0.65, y + h * 0.7); // right engine
+    ctx.lineTo(x + w * 0.85, y + h * 0.85); // right bottom
+    ctx.closePath();
+    ctx.shadowColor = '#0ff';
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Cockpit dome
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h * 0.45, w * 0.18, h * 0.18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#33ffff';
+    ctx.globalAlpha = 0.85;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Side wings
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.15, y + h * 0.85);
+    ctx.lineTo(x - w * 0.15, y + h * 0.7);
+    ctx.lineTo(x + w * 0.15, y + h * 0.7);
+    ctx.closePath();
+    ctx.fillStyle = '#099';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x + w * 0.85, y + h * 0.85);
+    ctx.lineTo(x + w * 1.15, y + h * 0.7);
+    ctx.lineTo(x + w * 0.85, y + h * 0.7);
+    ctx.closePath();
+    ctx.fill();
+
+    // Engine glow
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h * 0.98, w * 0.13, h * 0.10, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(0,255,255,0.5)';
+    ctx.shadowColor = '#0ff';
+    ctx.shadowBlur = 16;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  function drawBullet(b) {
+    ctx.fillStyle = '#0ff';
+    ctx.shadowColor = '#0ff';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(b.x, b.y, b.width, b.height);
+    ctx.shadowBlur = 0;
+  }
+
+  function drawEnemy(enemy) {
+    const x = enemy.x;
+    const y = enemy.y;
+    const w = enemy.width;
+    const h = enemy.height;
+    ctx.save();
+    // Main body (diamond/UFO)
+    ctx.beginPath();
+    ctx.moveTo(x + w / 2, y); // top
+    ctx.lineTo(x + w, y + h * 0.5); // right
+    ctx.lineTo(x + w / 2, y + h); // bottom
+    ctx.lineTo(x, y + h * 0.5); // left
+    ctx.closePath();
+    ctx.fillStyle = '#ff0044';
+    ctx.shadowColor = '#ff0044';
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Dome
+    ctx.beginPath();
+    ctx.ellipse(x + w / 2, y + h * 0.45, w * 0.22, h * 0.18, 0, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff';
+    ctx.globalAlpha = 0.7;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Lights
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(x + w * (0.25 + 0.25 * i), y + h * 0.85, w * 0.07, 0, Math.PI * 2);
+      ctx.fillStyle = '#ff5599';
+      ctx.shadowColor = '#ff5599';
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    ctx.restore();
+  }
+
+  // Event listeners
+  window.addEventListener('keydown', keyDownHandler);
+  window.addEventListener('keyup', keyUpHandler);
+
+  restartBtn.addEventListener('click', () => {
+    resetGame();
+  });
+
+  // Set canvas focus for keyboard events
+  canvas.setAttribute('tabindex', '0');
+  canvas.focus();
+
+  // Start the game initially
+  resetGame();
+})();
+</script>
+</body>
+</html>
+

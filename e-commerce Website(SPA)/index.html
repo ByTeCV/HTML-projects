@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Futuristic E-Commerce</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset and base */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f9fbff, #e3f0ff);
+      color: #111;
+      overflow-x: hidden;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+    }
+
+    /* Container */
+    #app {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 1.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(255 255 255 / 0.85);
+      backdrop-filter: saturate(180%) blur(16px);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      z-index: 1000;
+      border-radius: 0 0 16px 16px;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      animation: slideFadeDown 0.4s ease forwards;
+    }
+    @keyframes slideFadeDown {
+      0% {opacity: 0; transform: translateY(-25px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.75rem;
+      color: #0f4c81;
+      letter-spacing: 0.1em;
+      user-select: none;
+      cursor: default;
+      text-transform: uppercase;
+    }
+    nav {
+      flex: 1;
+      margin-left: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    nav a {
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 12px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      color: #0f4c81;
+    }
+    nav a:hover,
+    nav a:focus {
+      background: #0f4c81;
+      color: #f0f9ff;
+      outline: none;
+      box-shadow: 0 0 10px #0f4c81cc;
+      transform: scale(1.05);
+      transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Search */
+    .search-bar {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: 2rem;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 0.5rem 3rem 0.5rem 1rem;
+      border-radius: 32px;
+      border: 2px solid #cce3f7;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline-offset: 2px;
+    }
+    .search-bar input:focus {
+      border-color: #0f4c81;
+      box-shadow: 0 0 8px #0f4c81aa;
+    }
+    .search-bar svg {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      width: 20px;
+      height: 20px;
+      fill: #0f4c81;
+      transform: translateY(-50%);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* Cart Icon */
+    .cart-icon {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      color: #0f4c81;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cart-icon:hover {
+      transform: scale(1.15);
+      color: #074669;
+      filter: drop-shadow(0 0 5px #0f4c81aa);
+    }
+    .cart-icon svg {
+      width: 28px;
+      height: 28px;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #0f4c81;
+      color: #f0f9ff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 50%;
+      padding: 2px 6px;
+      box-shadow: 0 0 6px #0f4c81cc;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Hero Section */
+    .hero {
+      margin-top: 2rem;
+      background: radial-gradient(circle at top left, #e3f0ffdd, #ffffff);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px #0f4c81aa;
+      animation: fadeInUp 0.8s ease forwards;
+      user-select: none;
+    }
+    @keyframes fadeInUp {
+      0% {opacity: 0; transform: translateY(35px);}
+      100% {opacity: 1; transform: translateY(0);}
+    }
+    .hero-text {
+      flex: 1 1 320px;
+      max-width: 600px;
+      margin-right: 2rem;
+    }
+    .hero-text h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: #0f4c81;
+      margin-bottom: 1rem;
+      user-select: text;
+    }
+    .hero-text p {
+      font-size: 1.125rem;
+      color: #23557a;
+      margin-bottom: 2rem;
+      user-select: text;
+    }
+    .hero-text button {
+      background: #0f4c81;
+      color: #f0f9ff;
+      padding: 0.8rem 2.2rem;
+      border-radius: 36px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      box-shadow: 0 8px 18px #0f4c81aa;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
+    }
+    .hero-text button:hover,
+    .hero-text button:focus {
+      background: #005387;
+      box-shadow: 0 12px 26px #005387cc;
+      transform: scale(1.08);
+      outline: none;
+    }
+
+    .hero-image {
+      flex: 1 1 320px;
+      max-width: 480px;
+      position: relative;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px #0f4c81bb;
+      opacity: 0;
+      animation: fadeSlideIn 1s ease forwards 0.3s;
+    }
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    .hero-image img {
+      width: 100%;
+      display: block;
+      filter: drop-shadow(0 0 18px #0f4c81cc);
+      border-radius: 24px;
+    }
+
+    /* Main content area */
+    main {
+      margin-top: 3rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    /* Filters (left sidebar for desktop) */
+    .filters {
+      flex: 0 0 240px;
+      background: rgba(255 255 255 / 0.85);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 6px 18px #0f4c81aa;
+      animation: fadeInLeft 0.8s ease forwards;
+      position: sticky;
+      top: 110px;
+      height: fit-content;
+      user-select: none;
+    }
+    @keyframes fadeInLeft {
+      0% {opacity: 0; transform: translateX(-40px);}
+      100% {opacity: 1; transform: translateX(0);}
+    }
+    .filters h3 {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      color: #0f4c81;
+    }
+    .filters label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      user-select: text;
+      color: #23557a;
+      transition: color 0.3s ease;
+      border-radius: 8px;
+      padding: 0.2rem 0.8rem;
+    }
+    .filters label:hover {
+      color: #004a82;
+      font-weight: 700;
+    }
+    .filters input[type="checkbox"] {
+      margin-right: 0.5rem;
+      cursor: pointer;
+      accent-color: #0f4c81;
+      transform: scale(1.15);
+      vertical-align: middle;
+    }
+
+    /* Product List */
+    .product-list {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+      gap: 1.8rem;
+      user-select: none;
+    }
+    .product-card {
+      background: rgba(255 255 255 / 0.94);
+      border-radius: 24px;
+      box-shadow: 0 6px 20px #0f4c81aa;
+      padding: 1.25rem 1rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .product-card:hover,
+    .product-card:focus {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 8px 30px #0f4c81cc;
+      outline: none;
+      z-index: 10;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .product-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 20px;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 3px 12px #0f4c8144);
+      transition: filter 0.3s ease;
+    }
+    .product-card:hover img {
+      filter: drop-shadow(0 6px 22px #0f4c81bb);
+      transition: filter 0.3s ease;
+    }
+    .product-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #0f4c81;
+      margin-bottom: 0.3rem;
+      user-select: text;
+    }
+    .product-desc {
+      font-size: 0.9rem;
+      color: #4a6b8b;
+      flex-grow: 1;
+      user-select: text;
+    }
+    .product-price {
+      font-weight: 700;
+      font-size: 1.2rem;
+      margin-top: 1rem;
+      color: #0075c9;
+      user-select: text;
+    }
+
+    /* Add to cart button on product cards */
+    .add-cart-btn {
+      margin-top: 1rem;
+      background: #0f4c81;
+      color: #f0f9ff;
+      padding: 0.5rem 1.5rem;
+      border-radius: 32px;
+      font-weight: 700;
+      font-size: 1rem;
+      box-shadow: 0 8px 18px #0f4c81aa;
+      border: none;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .add-cart-btn:hover,
+    .add-cart-btn:focus {
+      background: #005387;
+      box-shadow: 0 12px 26px #005387cc;
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    /* Product Detail Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15,76,129,0.75);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 1500;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal {
+      background: #f9fbff;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px #0f4c8144;
+      max-width: 900px;
+      padding: 2rem 3rem;
+      display: flex;
+      gap: 2rem;
+      max-height: 88vh;
+      overflow-y: auto;
+      animation: modalScaleUp 0.3s ease forwards;
+      position: relative;
+    }
+    @keyframes modalScaleUp {
+      0% {opacity: 0; transform: scale(0.85);}
+      100% {opacity:1; transform: scale(1);}
+    }
+    .modal img {
+      width: 50%;
+      border-radius: 24px;
+      object-fit: cover;
+      box-shadow: 0 8px 28px #0f4c8144;
+      user-select: none;
+    }
+    .modal-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      user-select: text;
+    }
+    .modal-content h2 {
+      font-size: 2rem;
+      color: #0f4c81;
+      margin-bottom: 0.6rem;
+      font-weight: 800;
+    }
+    .modal-content p {
+      flex-grow: 1;
+      font-size: 1.075rem;
+      color: #2a465e;
+      margin-bottom: 1rem;
+    }
+    .modal-content .modal-price {
+      font-weight: 900;
+      font-size: 1.7rem;
+      color: #0075c9;
+      margin-bottom: 1.6rem;
+    }
+    .modal-content button {
+      background: #0f4c81;
+      color: #f0f9ff;
+      padding: 0.9rem 2.5rem;
+      border-radius: 44px;
+      font-weight: 700;
+      font-size: 1.25rem;
+      box-shadow: 0 10px 28px #0f4c81aa;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      align-self: flex-start;
+    }
+    .modal-content button:hover,
+    .modal-content button:focus {
+      background: #005387;
+      box-shadow: 0 14px 34px #005387cc;
+      transform: scale(1.1);
+      outline: none;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f4c81;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      user-select: none;
+    }
+    .modal-close:hover, .modal-close:focus {
+      color: #004a82;
+      outline: none;
+    }
+
+    /* Cart Sidebar */
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -480px;
+      width: 380px;
+      height: 100vh;
+      background: #f9fbff;
+      box-shadow: -6px 0 30px #0f4c8144;
+      border-radius: 24px 0 0 24px;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 2.5rem;
+      transition: right 0.4s cubic-bezier(0.4,0,0.2,1);
+      z-index: 1600;
+      user-select: none;
+    }
+    .cart-sidebar.active {
+      right: 0;
+    }
+    .cart-header {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f4c81;
+      margin-bottom: 1.5rem;
+      user-select: text;
+    }
+    .cart-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid #cce3f7;
+    }
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    .cart-item img {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 3px 9px #0f4c81bb;
+      user-select: none;
+    }
+    .cart-item-details {
+      flex-grow: 1;
+      user-select: text;
+    }
+    .cart-item-name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: #0f4c81;
+      margin-bottom: 0.2rem;
+    }
+    .cart-item-qty {
+      font-size: 0.9rem;
+      color: #4a6b8b;
+      margin-bottom: 0.1rem;
+    }
+    .cart-item-price {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0075c9;
+    }
+    .cart-item-remove {
+      background: transparent;
+      border: none;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #f44336;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      user-select: none;
+    }
+    .cart-item-remove:hover,
+    .cart-item-remove:focus {
+      color: #d32f2f;
+      outline: none;
+    }
+    .cart-footer {
+      border-top: 2px solid #cce3f7;
+      padding-top: 1.25rem;
+      user-select: none;
+    }
+    .cart-total {
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: #0f4c81;
+      margin-bottom: 1rem;
+      user-select: text;
+    }
+    .checkout-btn {
+      width: 100%;
+      background: #0f4c81;
+      color: #f0f9ff;
+      padding: 1rem 0;
+      border-radius: 44px;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 10px 28px #0f4c81aa;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      user-select: none;
+    }
+    .checkout-btn:hover,
+    .checkout-btn:focus {
+      background: #005387;
+      box-shadow: 0 14px 34px #005387cc;
+      transform: scale(1.05);
+      outline: none;
+    }
+    .cart-close-btn {
+      position: absolute;
+      top: 1rem;
+      left: 1.5rem;
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f4c81;
+      cursor: pointer;
+      transition: color 0.3s ease;
+      user-select: none;
+    }
+    .cart-close-btn:hover,
+    .cart-close-btn:focus {
+      color: #004a82;
+      outline: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 1040px) {
+      main {
+        flex-direction: column;
+      }
+      .filters {
+        width: 100%;
+        position: relative;
+        top: auto;
+        margin-bottom: 2rem;
+        height: auto;
+      }
+      .product-list {
+        grid-template-columns: repeat(auto-fill,minmax(160px,1fr));
+      }
+      .hero {
+        flex-direction: column;
+        padding: 2rem 1rem;
+      }
+      .hero-text, .hero-image {
+        max-width: 100%;
+        margin: 0;
+      }
+      .hero-image {
+        margin-top: 1.5rem;
+        box-shadow: 0 12px 26px #0f4c81cc;
+      }
+      header {
+        flex-wrap: wrap;
+        row-gap: 0.75rem;
+      }
+      nav {
+        margin-left: 0;
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+      .search-bar {
+        margin: 0 auto 0 auto;
+        max-width: 95%;
+      }
+      .cart-sidebar {
+        width: 100vw;
+        max-width: 400px;
+      }
+    }
+
+    @media (max-width: 440px) {
+      header {
+        justify-content: center;
+      }
+      nav {
+        display: none;
+      }
+      .search-bar {
+        margin: 0 auto;
+        max-width: 100%;
+      }
+      .cart-sidebar {
+        width: 100vw;
+        max-width: 100vw;
+        border-radius: 0;
+      }
+    }
+
+    /* Scrollbar for modals and cart */
+    .modal::-webkit-scrollbar,
+    .cart-list::-webkit-scrollbar {
+      width: 7px;
+    }
+    .modal::-webkit-scrollbar-track,
+    .cart-list::-webkit-scrollbar-track {
+      background: #e3f0ff99;
+      border-radius: 100px;
+    }
+    .modal::-webkit-scrollbar-thumb,
+    .cart-list::-webkit-scrollbar-thumb {
+      background: #0f4c81bb;
+      border-radius: 100px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" role="main" aria-label="E-commerce single page application">
+
+    <header>
+      <div class="logo" aria-label="Futuristic E-Commerce Logo">FUTURE SHOP</div>
+      <nav role="navigation" aria-label="Main navigation">
+        <a href="#" tabindex="0" id="nav-home">Home</a>
+        <a href="#" tabindex="0" id="nav-men">Men</a>
+        <a href="#" tabindex="0" id="nav-women">Women</a>
+        <a href="#" tabindex="0" id="nav-accessories">Accessories</a>
+      </nav>
+      <div class="search-bar">
+        <input type="search" id="search-input" aria-label="Search products" placeholder="Search products..." autocomplete="off" />
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M10 2a8 8 0 015.292 13.708l4.292 4.292-1.414 1.414-4.292-4.292A8 8 0 1110 2zm0 2a6 6 0 100 12 6 6 0 000-12z"/>
+        </svg>
+      </div>
+      <div class="cart-icon" role="button" tabindex="0" aria-label="Open shopping cart" id="cart-button">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M7 18c-1.104 0-2 .896-2 2s.896 2 2 2 2-.896 2-2-.896-2-2-2zm10 0c-1.104 0-2 .896-2 2s.896 2 2 2
+          2-.896 2-2-.896-2-2-2zM7.621 14l.873-3h6.46l.873 3H7.621zM7 4h10l1.545 6.321-1.25.517L16 10H8l-.315-1.162-1.25-.517L7 4z"/>
+        </svg>
+        <div class="cart-badge" id="cart-count" aria-live="polite" aria-atomic="true">0</div>
+      </div>
+    </header>
+
+    <section class="hero" aria-label="Featured product">
+      <div class="hero-text">
+        <h1>Explore the Future of Shopping</h1>
+        <p>Premium products with seamless experience. Discover, select, and buy with futuristic ease.</p>
+        <button id="shop-now-btn" aria-label="Shop Now Button">Shop Now</button>
+      </div>
+      <div class="hero-image" aria-hidden="true">
+        <img src="https://imgs.search.brave.com/tfgBDql3KHFJZqJLQvBq0ID-M_jzqyNeplcsk7GXV-M/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20va2R3R0kt/c3BVeU9MR2ZFOUg0/Tk93MThQaTcxdVNo/ZnpLalRrNUI2QVdj/Yy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkw/WldOby9jbVZ6WldG/eVkyaHZibXhwL2Jt/VXVZMjl0TDNkd0xX/TnYvYm5SbGJuUXZk/WEJzYjJGay9jeTh5/TURJeUx6QTJMMGx1/L2JtOTJZWFJwZG1V/dFlXNWsvTFVaMWRI/VnlhWE4wYVdNdC9W/R1ZqYUMxbllXUm5a/WFJ6L0xYUm9ZWFF0/ZDJsc2JDMXQvWVd0/bExYbHZkUzFUY0dW/bC9ZMmd0YkdWemMx/OWliRzluL0xXSmhi/bTVsY2kweExuZGwv/WW5B.jpeg" alt="Featured futuristic gadget" />
+      </div>
+    </section>
+
+    <main>
+
+      <aside class="filters" aria-label="Product filters">
+        <h3>Categories</h3>
+        <label>
+          <input type="checkbox" name="category" value="men" />
+          Men
+        </label>
+        <label>
+          <input type="checkbox" name="category" value="women" />
+          Women
+        </label>
+        <label>
+          <input type="checkbox" name="category" value="accessories" />
+          Accessories
+        </label>
+      </aside>
+
+      <section class="product-list" id="product-list" aria-live="polite" aria-label="Product listing">
+        <!-- Products injected here -->
+      </section>
+
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay" id="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-product-title">
+      <div class="modal" tabindex="0">
+        <button class="modal-close" id="modal-close-btn" aria-label="Close product details">&times;</button>
+        <img id="modal-product-image" src="" alt="" />
+        <div class="modal-content">
+          <h2 id="modal-product-title">Product Name</h2>
+          <p id="modal-product-description">Product Description</p>
+          <div class="modal-price" id="modal-product-price">₹0.00</div>
+          <button id="modal-add-cart-btn" aria-label="Add product to cart">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Sidebar -->
+    <aside class="cart-sidebar" id="cart-sidebar" aria-label="Shopping Cart" aria-live="polite" aria-atomic="true">
+      <button class="cart-close-btn" id="cart-close-btn" aria-label="Close shopping cart">&times;</button>
+      <div class="cart-header">Your Cart</div>
+      <div class="cart-list" id="cart-items">
+        <!-- Cart items injected here -->
+      </div>
+      <div class="cart-footer">
+        <div class="cart-total" id="cart-total">Total: ₹0.00</div>
+        <button class="checkout-btn" id="checkout-btn" aria-label="Proceed to checkout">Checkout</button>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    // Product Data
+    const products = [
+      {
+        id: 1,
+        name: "Vortex Smartwatch",
+        category: "men",
+        description: "Sleek, customizable smartwatch with futuristic design and full health monitoring features.",
+        price: 20000,
+        image: "https://imgs.search.brave.com/vVjNMJ3OwLt7Mri3bDp-RaInjMzgYRi-FvzkSzQqF9Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vN2h6d3Zy/OUpEc0wxUUpydkx5/N0Z3NnpjdzVpSFNt/Z0JBV2IyNlpWRTRZ/cy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/TG0xbC9aR2xoTFdG/dFlYcHZiaTVqL2Iy/MHZhVzFoWjJWekww/a3YvTlRGcFNXNU1V/bVZyVWt3dS9hbkJu"
+      },
+      {
+        id: 2,
+        name: "Luna Wireless Earbuds",
+        category: "women",
+        description: "Lightweight true wireless earbuds with crystal clear sound and touch controls.",
+        price: 3999, // ₹3,999
+        image: "https://imgs.search.brave.com/gBibI3sdO4ZpXbYGfmPsyRFW1J2lnL-y57BJG8fqubw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vUWg3NDFL/eGZIeko2WGtLNkdw/ckhGa0NzNzdMRFpz/cmVKZlIxY213M3Ru/by9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlv/YVhCei9MbWhsWVhK/emRHRndjSE11L1ky/OXRMM1poWkdWeUxY/QnkvYjJRdWN6TXVZ/VzFoZW05dS9ZWGR6/TG1OdmJTOHhOelEy/L05qUTFNVGd4TFRF/M05EQXgvT0RFMk9U/Y3RjRzkzWlhKaS9a/V0YwY3kxd2NtOHRN/aTB3L01UQXROamRo/Wmpsa05USXcvWmpN/Mk9DNXFjR2NfWTNK/di9jRDB3TGpjMU1Y/aDNPakV1L01EQjRh/RHN3TGpBM01EQjQv/ZHl3d0puSmxjMmw2/WlQwNS9PREE2S2c.jpeg"
+      },
+      {
+        id: 3,
+        name: "Nebula VR Headset",
+        category: "accessories",
+        description: "Immersive virtual reality headset with high-resolution display and ergonomic design.",
+        price: 39950, // ₹39,950
+        image: "https://imgs.search.brave.com/Kh2_qmWTy39FHyASUQDZWesY-yYmI55npd9UVyKQq48/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vVnBqd1dO/clI2TEFKZy1Odk9v/dDlTM1RMdUJQdHR6/ci1LbDFRMF84RW12/RS9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlw/YldjdS9abkpsWlhC/cGF5NWpiMjB2L1pu/SmxaUzF3YUc5MGJ5/OTAvYjNBdGRtbGxk/eTEyYVhKMC9kV0Zz/TFhKbFlXeHBkSGt0/L2FHVmhaSE5sZEY4/eU15MHkvTVRRNE9U/RXlOek0zTG1wdy9a/ejl6WlcxMFBXRnBj/MTlvL2VXSnlhV1Ft/ZHowM05EQQ"
+      },
+      {
+        id: 4,
+        name: "Quantum Sneakers",
+        category: "men",
+        description: "Comfortable, responsive sneakers with smart sole technology for perfect stride and style.",
+        price: 5975, // ₹5,975
+        image: "https://imgs.search.brave.com/0D1QOIl0ejuKGvRKKSoJSbY74c9DJwmR4nuFjx9JvNo/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vZkJOd2hU/S25Sd1NReFlGMmVY/YkNtUHpQbW84cEtS/M2dkdERfR0tqYk5r/OC9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl0/TG0xbC9aR2xoTFdG/dFlYcHZiaTVqL2Iy/MHZhVzFoWjJWekww/a3YvTnpFMlMwVXdN/RFpDVDB3dS9hbkJu"
+      },
+      {
+        id: 5,
+        name: "Aurora Smart Handbag",
+        category: "women",
+        description: "Elegant handbag with integrated wireless charging and anti-theft technology inside.",
+        price: 14900, // ₹14,900
+        image: "https://imgs.search.brave.com/KWEt2LcPdIDuzRDIW_ZGmcqiv5HGE0yrDz1u5YmkRkw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vS01XUzJZ/cE1pRXBaUzlhMGV4/S2FubFI3VHNudkRG/anhRTXpuTTdYZE9Q/dy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkw/TXk1bS9kR05rYmk1/dVpYUXZhbkJuL0x6/QTFMemMxTHpBeUx6/ZzIvTHpNMk1GOUdY/elUzTlRBeS9PRFk0/TkY5b2EyUndRamhq/L2JXb3hhMFp3U0hw/dE9XUlIvUjNsVmVH/cDFTSFJ2UVZkdi9V/eTVxY0dj.jpeg"
+      },
+      {
+        id: 6,
+        name: "Photon Gaming Mouse",
+        category: "accessories",
+        description: "High precision gaming mouse with RGB lighting and ultra-responsive click technology.",
+        price: 1999, // ₹1,999
+        image: "https://imgs.search.brave.com/A6Slj6VzrxJRjqE-Y5PQymckBhyrvWe9J00XnVUH_gA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vdUFiNXFU/eGpVRTh4NWVRNkhL/bnV3ZFBXUmZXQUgx/YWxNS2JWMU9ma0tC/cy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkw/YUhWdC9Zbk11WkhK/bFlXMXpkR2x0L1pT/NWpiMjB2WWk5M2FH/bDAvWlMxbllXMXBi/bWN0Ylc5MS9jMlV0/Y21kaUxXeGxaQzFz/L2FXZG9kSE10WW14/aFkyc3QvWW1GamEy/ZHliM1Z1WkMxbi9Z/VzFwYm1jdGJXOTFj/MlV0L2JHVmtMV3hw/WjJoMGN5MHkvTVRJ/NE1EVXlPREl1YW5C/bg.jpeg"
+      },
+      {
+        id: 7,
+        name: "Celestial Jacket",
+        category: "men",
+        description: "Waterproof futuristic jacket with self-heating material and holographic trims.",
+        price: 2920, // ₹2,920
+        image: "https://imgs.search.brave.com/TTPoY-qhOndeVgzfga8ZK_HEZVNrsip59eWBDI1E6So/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vckZvSXlX/dy1jdlI5eng4THhs/Zk1aaHlNMHpESkRX/dFE5Y04xRWVFaGI3/US9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlw/TG1WMC9jM2x6ZEdG/MGFXTXVZMjl0L0x6/SXhNVGc0TkRJekwz/SXYvYVd3dk5qQTFZ/ekprTHpRei9Oamt3/TmpZeE9EUXZhV3hm/L05qQXdlRFl3TUM0/ME16WTUvTURZMk1U/ZzBYemxwZEhZdS9h/bkJu.jpeg"
+      },
+      {
+        id: 8,
+        name: "Elysian Necklace",
+        category: "women",
+        description: "Pearl inspired 3D printed necklace with smart LED effects to match your outfit mood.",
+        price: 7499, // ₹7,499
+        image: "https://imgs.search.brave.com/dFsNobye-TVqLTwAgmieCX39HY1rInaqDnhtnK0yyvQ/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vWXp6TEQ1/WnJvZEFMM2pPUXZO/emhYNDhIZGI5dU5I/di1DOGlkcHd6WjlV/by9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlp/WVdscy9aWGt0WVcx/emRHVnlaR0Z0L0xt/TnZiUzlqWkc0dmMy/aHYvY0M5bWFXeGxj/eTgyUkRsRC9PRUZF/UkMwd09VSkZMVFEw/L09UTXRRalE1TUMx/RE9UZEUvT0RjMU16/RkNNRGN1YW5Cbi9Q/M1k5TVRjek1qUTJO/elV4L01DWjNhV1Iw/YUQweE5EUTE.jpeg"
+      },
+      {
+        id: 9,
+        name: "Zenith Fitness Band",
+        category: "men",
+        description: "Track your health and fitness with this ultra-light, waterproof smart band with 2-week battery.",
+        price: 2499, // ₹2,499
+        image: "https://imgs.search.brave.com/5utUWWdF8iTT11gpVDj-u5FF4usbQ0wnvzsLYEJBJSY/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vX2JRNUtf/UW96V21JQkRJYlZC/VGVxNjZCSld4R0Yz/aEZFTzB1WXFkSzQ2/Zy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlq/Wkc0dS9iVzl6TG1O/dGN5NW1kWFIxL2Nt/VmpaRzR1Ym1WMEx6/bHgvV2tGaVJtaHlS/MkZ0TjI4MS9aR0o0/WlRWWVExUXVhbkJu.jpeg"
+      },
+      {
+        id: 10,
+        name: "Stellar Smart Ring",
+        category: "women",
+        description: "Elegant smart ring for health tracking, notifications, and contactless payments.",
+        price: 5999, // ₹5,999
+        image: "https://imgs.search.brave.com/Jln2KsOIUdOztbqLY9S1FcvYGw8mVsEJByFTEjt0EGs/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vWVhVRzk3/N1VtV19DQmpxanhS/TV9LM0ZRbTk4ekl1/NWJBdnNmeElpc3FK/dy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTl6/ZEdGMC9hV014TG1G/dWNHOXBiV0ZuL1pY/TXVZMjl0TDNkdmNt/UncvY21WemN5OTNj/QzFqYjI1MC9aVzUw/TDNWd2JHOWhaSE12/L01qQXlOQzh3Tmk5/b1pXeHAvYnkxeWFX/NW5MWGRvYVhSbC9M/V0poWTJ0bmNtOTFi/bVF0L01URXVhbkJu.jpeg"
+      },
+      {
+        id: 11,
+        name: "Nova Bluetooth Speaker",
+        category: "accessories",
+        description: "Portable, high-fidelity Bluetooth speaker with ambient LED lighting and 24h battery.",
+        price: 3499, // ₹3,499
+        image: "https://imgs.search.brave.com/a1A9rsD1AzAj5KzWz_0XSJJ57Z-szBW4Io7DQqYR9xA/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vWFhjbEU3/RUVTZGdaeUdpQ3A1/TG9sVHNGSGVvdk9F/ZlBjTEhOb2Q5eGds/cy9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTlq/Wkc0dS9kR2hsZDJs/eVpXTjFkSFJsL2Np/NWpiMjB2ZDNBdFky/OXUvZEdWdWRDOXRa/V1JwWVM4eS9NREkw/THpFeEwzQnZjblJo/L1lteGxZbXgxWlhS/dmIzUm8vYzNCbFlX/dGxjbk10TWpBMC9P/SEI0TFRrME9ERXVh/bkJuL1AyRjFkRzg5/ZDJWaWNDWngvZFdG/c2FYUjVQVGMxSm5k/cC9aSFJvUFRFd01q/UQ.jpeg"
+      },
+      {
+        id: 12,
+        name: "Orion Smart Wallet",
+        category: "men",
+        description: "RFID-protected wallet with Bluetooth tracker and built-in power bank for your phone.",
+        price: 3990, // ₹3,990
+        image: "https://imgs.search.brave.com/mc0j4MjamL4Kmw1rZIN2rW1clzKONFCccsATRMMLIas/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9pbWdz/LnNlYXJjaC5icmF2/ZS5jb20vRFR6RVlW/S1I0SVZSSVVxV09M/bnZvM215VEtvQmhK/UGlnbVp6bWRFd2Ff/ay9yczpmaXQ6NTAw/OjA6MDowL2c6Y2Uv/YUhSMGNITTZMeTkz/ZDNjdS9aM0p2YjNa/bGJHbG1aUzVqL2Iy/MHZZMlJ1TDNOb2Iz/QXYvWm1sc1pYTXZR/bkp2ZDI1Zi9UR1Zo/ZEdobGNsOVhhWFJv/L1gwTmhjMmhmVm1s/bGQxOHkvTG5CdVp6/OTJQVEUzTkRJNS9N/VFUzTURjbWQybGtk/R2c5L01qZ3dNQQ.jpeg"
+      }
+    ];
+
+    // State
+    let filteredCategories = [];
+    let searchTerm = '';
+    let cart = [];
+
+    // Cached DOM elements
+    const productListEl = document.getElementById('product-list');
+    const searchInputEl = document.getElementById('search-input');
+    const categoryCheckboxes = document.querySelectorAll('.filters input[type="checkbox"]');
+    const productModalEl = document.getElementById('product-modal');
+    const modalCloseBtn = document.getElementById('modal-close-btn');
+    const modalAddCartBtn = document.getElementById('modal-add-cart-btn');
+    const modalProductImage = document.getElementById('modal-product-image');
+    const modalProductTitle = document.getElementById('modal-product-title');
+    const modalProductDescription = document.getElementById('modal-product-description');
+    const modalProductPrice = document.getElementById('modal-product-price');
+    const cartButton = document.getElementById('cart-button');
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const cartCloseBtn = document.getElementById('cart-close-btn');
+    const cartCountEl = document.getElementById('cart-count');
+    const cartItemsEl = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const shopNowBtn = document.getElementById('shop-now-btn');
+    
+    let currentModalProductId = null;
+
+    // Functions
+
+    // Format price
+    function formatPrice(amount) {
+      return '₹' + amount.toFixed(2);
+    }
+
+    // Render Products
+    function renderProducts() {
+      // Filter products by category and search term
+      let filtered = products.filter(p => {
+        const matchCategory = filteredCategories.length === 0 || filteredCategories.includes(p.category);
+        const matchSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchCategory && matchSearch;
+      });
+
+      if(filtered.length === 0) {
+        productListEl.innerHTML = `<p style="text-align:center; font-weight:600; color:#0f4c81; user-select:text; padding: 1rem;">No products found matching your criteria.</p>`;
+        return;
+      }
+
+      productListEl.innerHTML = filtered.map(p => `
+        <article class="product-card" tabindex="0" aria-label="View details for ${p.name}" data-id="${p.id}" role="button">
+          <img src="${p.image}" alt="${p.name}" loading="lazy" />
+          <h3 class="product-name">${p.name}</h3>
+          <p class="product-desc">${p.description.substring(0, 70)}${p.description.length > 70 ? '...' : ''}</p>
+          <div class="product-price">${formatPrice(p.price)}</div>
+          <button class="add-cart-btn" aria-label="Add ${p.name} to cart" data-id="${p.id}">Add to Cart</button>
+        </article>
+      `).join('');
+    }
+
+    // Render Cart
+    function renderCart() {
+      if (cart.length === 0) {
+        cartItemsEl.innerHTML = `<p style="text-align:center; color:#0f4c81; font-weight:600; user-select:text;">Your cart is empty.</p>`;
+        cartTotalEl.textContent = 'Total: ₹0.00';
+        cartCountEl.textContent = '0';
+        return;
+      }
+      cartItemsEl.innerHTML = cart.map(item => {
+        const product = products.find(p => p.id === item.productId);
+        return `
+        <div class="cart-item" data-id="${item.productId}">
+          <img src="${product.image}" alt="${product.name}" />
+          <div class="cart-item-details">
+            <div class="cart-item-name">${product.name}</div>
+            <div class="cart-item-qty">Qty: ${item.quantity}</div>
+            <div class="cart-item-price">${formatPrice(product.price * item.quantity)}</div>
+          </div>
+          <button class="cart-item-remove" aria-label="Remove ${product.name} from cart" data-id="${item.productId}">&times;</button>
+        </div>
+        `
+      }).join('');
+      const total = cart.reduce((acc, item) => {
+        const product = products.find(p => p.id === item.productId);
+        return acc + product.price * item.quantity;
+      }, 0);
+      cartTotalEl.textContent = 'Total: ' + formatPrice(total);
+      cartCountEl.textContent = cart.reduce((acc, item) => acc + item.quantity, 0);
+    }
+
+    // Add to cart function
+    function addToCart(productId) {
+      const existingItem = cart.find(item => item.productId === productId);
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({productId, quantity: 1});
+      }
+      renderCart();
+      animateCartIcon();
+    }
+
+    // Remove from cart
+    function removeFromCart(productId) {
+      const idx = cart.findIndex(item => item.productId === productId);
+      if (idx !== -1) {
+        cart.splice(idx, 1);
+        renderCart();
+      }
+    }
+
+    // Animate cart icon on add
+    function animateCartIcon() {
+      cartButton.animate([
+        { transform: 'scale(1)' },
+        { transform: 'scale(1.3)' },
+        { transform: 'scale(1)' }
+      ], {
+        duration: 300,
+        easing: 'ease-out'
+      });
+    }
+
+    // Open product modal
+    function openProductModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+      currentModalProductId = productId;
+      modalProductImage.src = product.image;
+      modalProductImage.alt = product.name;
+      modalProductTitle.textContent = product.name;
+      modalProductDescription.textContent = product.description;
+      modalProductPrice.textContent = formatPrice(product.price);
+      productModalEl.classList.add('active');
+      modalCloseBtn.focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close product modal
+    function closeProductModal() {
+      productModalEl.classList.remove('active');
+      currentModalProductId = null;
+      document.body.style.overflow = '';
+      // Return focus to last focused element safely
+      if(lastFocusedProductCard) lastFocusedProductCard.focus();
+    }
+
+    // Open cart sidebar
+    function openCartSidebar() {
+      cartSidebar.classList.add('active');
+      cartCloseBtn.focus();
+      document.body.style.overflow = 'hidden';
+    }
+
+    // Close cart sidebar
+    function closeCartSidebar() {
+      cartSidebar.classList.remove('active');
+      document.body.style.overflow = '';
+      cartButton.focus();
+    }
+
+    // Filter products based on categories
+    function updateFilters() {
+      filteredCategories = Array.from(categoryCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+      renderProducts();
+    }
+
+    // Search products dynamically
+    function updateSearch() {
+      searchTerm = searchInputEl.value.trim();
+      renderProducts();
+    }
+
+    // Variables to keep track of last focused product card for accessible modal close
+    let lastFocusedProductCard = null;
+
+    // Event Listeners
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProducts();
+      renderCart();
+    });
+
+    // Search input
+    searchInputEl.addEventListener('input', updateSearch);
+
+    // Filter checkbox change
+    categoryCheckboxes.forEach(cb => 
+      cb.addEventListener('change', updateFilters)
+    );
+
+    // Product click or keypress to open modal
+    productListEl.addEventListener('click', (e) => {
+      if(e.target.classList.contains('add-cart-btn')) {
+        const productId = +e.target.getAttribute('data-id');
+        addToCart(productId);
+        e.stopPropagation();
+        return;
+      }
+      const card = e.target.closest('.product-card');
+      if(card) {
+        const productId = +card.getAttribute('data-id');
+        lastFocusedProductCard = card;
+        openProductModal(productId);
+      }
+    });
+
+    // Keyboard accessibility on product cards: Enter or Space opens modal
+    productListEl.addEventListener('keydown', (e) => {
+      const card = e.target.closest('.product-card');
+      if(card && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        const productId = +card.getAttribute('data-id');
+        lastFocusedProductCard = card;
+        openProductModal(productId);
+      }
+    });
+
+    // Close modal button
+    modalCloseBtn.addEventListener('click', closeProductModal);
+
+    // Close modal on overlay click (only if clicked outside modal)
+    productModalEl.addEventListener('click', e => {
+      if (e.target === productModalEl) closeProductModal();
+    });
+
+    // Keyboard close modal with Escape
+    window.addEventListener('keydown', e => {
+      if(e.key === 'Escape') {
+        if(productModalEl.classList.contains('active')) {
+          closeProductModal();
+        }
+        if(cartSidebar.classList.contains('active')) {
+          closeCartSidebar();
+        }
+      }
+    });
+
+    // Add to cart from modal
+    modalAddCartBtn.addEventListener('click', () => {
+      if (currentModalProductId !== null) {
+        addToCart(currentModalProductId);
+        closeProductModal();
+      }
+    });
+
+    // Open cart sidebar
+    cartButton.addEventListener('click', openCartSidebar);
+
+    // Keyboard accessibility for cart button
+    cartButton.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openCartSidebar();
+      }
+    });
+
+    // Close cart sidebar
+    cartCloseBtn.addEventListener('click', closeCartSidebar);
+
+    // Remove item from cart
+    cartItemsEl.addEventListener('click', e => {
+      if(e.target.classList.contains('cart-item-remove')) {
+        const productId = +e.target.getAttribute('data-id');
+        removeFromCart(productId);
+      }
+    });
+
+    // Checkout button click
+    checkoutBtn.addEventListener('click', () => {
+      if (cart.length === 0) {
+        alert('Your cart is empty! Add some products first.');
+        return;
+      }
+      alert('Thank you for your purchase! This is a demo and does not process payments.');
+      cart = [];
+      renderCart();
+      closeCartSidebar();
+    });
+
+    // Shop now button scrolls to product list
+    shopNowBtn.addEventListener('click', () => {
+      document.getElementById('product-list').scrollIntoView({behavior: 'smooth', block: 'start'});
+    });
+
+  </script>
+</body>
+</html>
+
